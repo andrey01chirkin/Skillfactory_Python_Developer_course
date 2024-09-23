@@ -22,7 +22,7 @@ def check_completion_game(board, number_player: int, mark: str) -> bool:
     :return: bool
     """
     if any([  # Условия победы
-        [3*mark] in board,  # Проверка равенства значений в строке
+        [mark]*3 in board,  # Проверка равенства значений в строке
         set([board[index_row][0] for index_row in range(3)]) == set(mark),  # Проверка равенства в столбце с индексом 0
         set([board[index_row][1] for index_row in range(3)]) == set(mark),  # Проверка равенства в столбце с индексом 1
         set([board[index_row][2] for index_row in range(3)]) == set(mark),  # Проверка равенства в столбце с индексом 2
