@@ -13,28 +13,19 @@ def print_board(board: list[list[str]]) -> None:
         print()
 
 
-def check_completion_game(board: list[list[str]], number_player: int, mark: str) -> bool:
+def check_completion_game(board: list[list[str]], mark: str) -> bool:
     """
     Функция проверяет завершенность игры.
     :param board:
-    :param number_player:
     :param mark:
     :return: Bool
     """
-    if any([  # Условия победы
+    return any([  # Условия победы
         [mark] * 3 in board,  # Проверка равенства значений в строке
         (mark,) * 3 in list(zip(*board)),  # Проверка равенства значений в столбце
         [mark] * 3 == [row[i] for i, row in enumerate(board)],  # Проверка равенства значений по диагонали
-        [mark] * 3 == [row[i] for i, row in enumerate(board[::-1])]  # Проверка равенства значений по противоположной диагонали
-    ]):
-        print(f"Игрок {number_player} победил!")
-        return True
-    else:
-        max_amount_items = 9
-        if sum(row.count('X') + row.count('0') for row in board) == max_amount_items:
-            print("Ничья")
-            return True
-        return False
+        [mark] * 3 == [row[i] for i, row in enumerate(board[::-1])] # Проверка равенства значений по противоположной диагонали
+    ]) or False
 
 
 def input_data_player(board: list[list[str]], number_player: int, mark: str) -> bool:
@@ -43,32 +34,32 @@ def input_data_player(board: list[list[str]], number_player: int, mark: str) -> 
     :param board:
     :param number_player:
     :param mark:
-    :return:
+    :return: Bool
     """
     while True:
         print(f"\nИгрок {number_player} ваш ход")
         row_index = input("Введите индекс строки: ")
-        if row_index in ('0', '1', '2'):
-            row_index = int(row_index)
-            col_index = input("Введите индекс столбца: ")
-            if col_index in ('0', '1', '2'):
-                col_index = int(col_index)
-                if board[row_index][col_index] not in ('X', '0'):
-                    board[row_index][col_index] = mark
-                    print_board(board)
-                    return check_completion_game(board, number_player, mark)  # Проверяет на завершенность игры
-                else:
-                    print("Ячейка занята!")
-                    print_board(board)
-                    continue
-            else:
-                print("Индекс столбца должен быть числом от 0 до 2!")
-                print_board(board)
-                continue
-        else:
-            print("Индекс строки должен быть число от 0 до 2!")
+        if row_index not in ('0', '1', '2'):
+            print("Индекс строки должен быть числом от 0 до 2!")
             print_board(board)
             continue
+
+        col_index = input("Введите индекс столбца: ")
+        if col_index not in ('0', '1', '2'):
+            print("Индекс столбца должен быть число от 0 до 2!")
+            print_board(board)
+            continue
+
+        row_index = int(row_index)
+        col_index = int(col_index)
+
+        if board[row_index][col_index] not in ('X', '0'):
+            board[row_index][col_index] = mark
+            print_board(board)
+            return check_completion_game(board, mark)  # Проверяет на завершенность игры
+        else:
+            print("Ячейка занята!")
+            print_board(board)
 
 
 def main() -> None:
@@ -83,9 +74,22 @@ def main() -> None:
         ['-', '-', '-']
     ]
     print_board(board)
-    while True:
-        if input_data_player(board, 1, 'X') or input_data_player(board, 2, '0'):
+
+    max_amount_items = 9
+    for i in range(max_amount_items):
+
+        number_player = 1
+        if input_data_player(board, number_player, 'X'):
+            print(f"Игрок {number_player} победил!")
             break
+
+        number_player = 2
+        if input_data_player(board, number_player, '0'):
+            print(f"Игрок {number_player} победил!")
+            break
+
+        if i == max_amount_items - 1:
+            print(f"Ничья!")
 
 
 main()
