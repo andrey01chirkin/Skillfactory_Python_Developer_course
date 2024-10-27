@@ -41,26 +41,12 @@ def convert(message: telebot.types.Message) -> None:
             raise APIException(f'Неверный формат ввода данных. /help')
 
         quote, base, amount = values
-
-        if quote == base:
-            raise APIException(f'Вы ввели одинаковые валюты.\nФормат ввода данных: /help')
-
-        if not currencies.get(quote):
-            raise APIException(f'Валюта \"{quote}\" не существует.\nФормат ввода данных: /help')
-
-        if not currencies.get(base):
-            raise APIException(f'Валюта \"{base}\" не существует.\nФормат ввода данных: /help')
-
-        try:
-            amount = float(amount)
-        except ValueError:
-            raise APIException(f'Значение \"<количество переводимой валюты>\" должно быть числом.\nФормат ввода данных: /help')
-
+        result = CryptoConverter.get_price(quote, base, amount)
     except APIException as e:
         bot.reply_to(message, f'Ошибка ввода:\n{e}')
     else:
-        result = CryptoConverter.get_price(quote, base, amount)
-        bot.reply_to(message, f'{amount} \"{quote}\" в \"{base}\" = {result}')
+        text = f'{amount} \"{quote}\" в \"{base}\" = {result}'
+        bot.send_message(message.chat.id, text)
 
 
 bot.polling(none_stop=True)
